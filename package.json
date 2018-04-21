@@ -10,7 +10,6 @@
   "license": "MIT",
   "dependencies": {
     "eslint": "^4.19.1",
-    "express": "^4.16.3",
-    "nodemon": "^1.17.3"
+    "express": "^4.16.3"
   }
 }
