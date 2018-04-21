@@ -9,6 +9,8 @@
   "author": "Manpreet Singh",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.3"
+    "eslint": "^4.19.1",
+    "express": "^4.16.3",
+    "nodemon": "^1.17.3"
   }
 }
