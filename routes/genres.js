@@ -36,19 +36,21 @@ router.get('/:id', (req, res) => {
  * It will create a genre and push it to genres array.
  */
 router.post('/', (req, res) => {
-  validateReqBody(req.body)
-    .then( (result) => {
+  async function processPostReq() {
+    try {
+      const validReqData = await validateReqBody(req.body) ;
       const genre = {
         id:   genres.length + 1,
-        name: result.genreName
-      } ;
-      // Add to genres array.
+        genreName: validReqData.genreName      
+      }
       genres.push(genre) ;
       return res.send(genre) ;
-    } )
-    .catch( (result) => {
-      return res.send( result.error.details[0].message ) ;
-    } ) ;
+    }
+    catch(error) {
+      return res.send(error.message) ;
+    }
+  }
+  processPostReq() ;
 }) ;
 
 /**
