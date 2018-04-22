@@ -56,21 +56,18 @@ router.post('/', (req, res) => {
  * It will update a genre object if valid.
  */
 router.put('/:id', (req, res) => {
-  findGenre(req.params.id)
-    .then( (genre) => {
-      validateReqBody(req.body)
-        .then( (result) => {
-          genre.genreName = result.genreName ;
-          return res.send(genre) ;
-        } )
-        .catch( (result) => {
-          return res.send( result.error.details[0].message ) ;
-        } ) ;
-    } )
-    .catch( (error) => {
-      console.log('find genre catch ' + genre) ;
-      return res.send(error) ;
-    } ) ;
+  async function processPutReq() {
+    try {
+      const genre        = await findGenre(req.params.id) ;
+      const validReqData = await validateReqBody(req.body) ;
+      genre.genreName    = validReqData.genreName ;
+      return res.send(genre) ;
+    } 
+    catch(error) {
+      return res.send(error.message) ;
+    }
+  }
+  processPutReq() ;
 } ) ;
 
 /**
@@ -92,7 +89,7 @@ function findGenre(id) {
     const genre = genres.find( (g) => {
       return g.id === Number.parseInt(id) ;
     } ) ;
-    if( genre === undefined ) reject('Genre not found') ;
+    if( genre === undefined ) reject( new Error('Genre not found') ) ;
     resolve(genre) ;
   }) ;
 }
@@ -103,7 +100,7 @@ function validateReqBody(body) {
       genreName: Joi.string().min(2).max(7).required()
     } ;
     const result = Joi.validate(body, schema) ;
-    result.error === null ? resolve(result) : reject(result) ;
+    result.error === null ? resolve(result) : reject( new Error(result.error.details[0].message) ) ;
   } ) ;  
 }
 
