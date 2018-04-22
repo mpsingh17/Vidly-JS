@@ -9,6 +9,7 @@
   "author": "Manpreet Singh",
   "license": "MIT",
   "dependencies": {
+    "config": "^1.30.0",
     "eslint": "^4.19.1",
     "express": "^4.16.3",
     "joi": "^13.2.0"
