@@ -1,6 +1,7 @@
-const express = require('express'),
-      Joi     = require('joi'),
-      router  = express.Router() ;
+const express  = require('express'),
+      Joi      = require('joi'),
+      mongoose = require('mongoose'),
+      router   = express.Router() ;
 
 //------------------ In memory genres ---------------//
 const genres = [
