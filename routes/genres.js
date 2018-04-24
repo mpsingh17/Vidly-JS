@@ -1,6 +1,8 @@
 const express  = require('express'),
       Joi      = require('joi'),
       mongoose = require('mongoose'),
+      Genre    = require('../models/Genre'),
+      dbDebugger  = require('debug')('app:db'),
       router   = express.Router() ;
 
 //------------------ In memory genres ---------------//
@@ -15,7 +17,15 @@ const genres = [
  * It will send array of objects of genres
  */
 router.get('/', (req, res) => { 
-  return res.send(genres) ;
+  Genre
+    .find()
+    .select({name: 1})
+    .then((genres) => {
+      return res.send(genres) ;
+    })
+    .catch((error) => {
+      return res.send(error) ;
+    }) ; 
 }) ;
 
 /**
