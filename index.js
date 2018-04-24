@@ -7,9 +7,7 @@ const express     = require('express'),
       appDebugger = require('debug')('app:startup'),
       dbDebugger  = require('debug')('app:db'),
       morgan      = require('morgan'),
-      rfs         = require('rotating-file-stream'),
-      fs          = require('fs'),
-      path        = require('path'),
+      logStream   = require('./middlewares/logger'),
       genres      = require('./routes/genres') ;
 
 const app = express() ;
@@ -24,14 +22,6 @@ if ( process.env.NODE_ENV === 'development' ) {
 
 //------------------------------------- Middlewares ------------------------------//
 app.use(express.json()) ; // Parse request body to JSON.
-
-/************** HTTP requests log enabled using morgan and rotating-file-stream **************/
-const logDirectory = path.join(__dirname, 'logs') ;
-fs.existsSync(logDirectory) || fs.mkdir(logDirectory) ;
-const logStream = rfs('access.log', {
-  interval: '1d',
-  path: logDirectory
-}) ;
 app.use(morgan('tiny', {stream: logStream})) ; // Log all http requests.
 
 //--------------------- Routes Middlewares ---------------------//
