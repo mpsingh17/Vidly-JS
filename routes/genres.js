@@ -6,13 +6,6 @@ const express       = require('express'),
       dbDebugger    = require('debug')('app:db'),
       genreDebugger = require('debug')('app:genre') ;
 
-//------------------ In memory genres ---------------//
-const genres = [
-  { id: 1, genreName: 'Action' },
-  { id: 2, genreName: 'Comedy' },
-  { id: 3, genreName: 'Drama' }
-] ;
-
 /**
  * GET: /api/genres
  * It will send array of objects of genres
