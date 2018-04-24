@@ -1,9 +1,10 @@
-const express  = require('express'),
-      Joi      = require('joi'),
-      mongoose = require('mongoose'),
-      Genre    = require('../models/Genre'),
-      dbDebugger  = require('debug')('app:db'),
-      router   = express.Router() ;
+const express       = require('express'),
+      router        = express.Router(),
+      Joi           = require('joi'),
+      mongoose      = require('mongoose'),
+      Genre         = require('../models/Genre'),
+      dbDebugger    = require('debug')('app:db'),
+      genreDebugger = require('debug')('app:genre') ;
 
 //------------------ In memory genres ---------------//
 const genres = [
@@ -16,16 +17,17 @@ const genres = [
  * GET: /api/genres
  * It will send array of objects of genres
  */
-router.get('/', (req, res) => { 
-  Genre
-    .find()
-    .select({name: 1})
-    .then((genres) => {
+router.get('/', (req, res) => {
+  async function getAllGenres() {
+    try {
+      const genres = await Genre.find() ;
       return res.send(genres) ;
-    })
-    .catch((error) => {
-      return res.send(error) ;
-    }) ; 
+    }
+    catch(err) {
+      return res.status(404).send(err) ;
+    }
+  }
+  getAllGenres() ;
 }) ;
 
 /**
@@ -33,13 +35,16 @@ router.get('/', (req, res) => {
  * It will send object of single genre
  */
 router.get('/:id', (req, res) => {
-  findGenre(req.params.id)
-    .then( (genre) => {
+  async function getGenreByID() {
+    try {
+      const genre = await Genre.findById(req.params.id) ;
       return res.send(genre) ;
-    } )
-    .catch( (error) => {
-      return res.send(error) ;
-    } ) ;
+    } 
+    catch(err) {
+      return res.status(404).send(err.message) ;
+    }
+  }
+  getGenreByID() ;
 }) ;
 
 /**
@@ -50,14 +55,16 @@ router.post('/', (req, res) => {
   async function processPostReq() {
     try {
       const validReqData = await validateReqBody(req.body) ;
-      const genre = {
-        id:   genres.length + 1,
-        genreName: validReqData.genreName      
-      }
-      genres.push(genre) ;
-      return res.send(genre) ;
+      genreDebugger('valid req data is ' , validReqData) ;
+
+      const genre = new Genre( {
+        name: validReqData.name
+      } ) ;
+      const result = await genre.save() ;
+      return res.send(result) ;
     }
     catch(error) {
+      genreDebugger('error is ' , error.message) ;
       return res.send(error.message) ;
     }
   }
@@ -71,9 +78,14 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   async function processPutReq() {
     try {
-      const genre        = await findGenre(req.params.id) ;
       const validReqData = await validateReqBody(req.body) ;
-      genre.genreName    = validReqData.genreName ;
+      const genre        = await Genre.findById(req.params.id) ;
+      genreDebugger(genre, ' --> ' , validReqData) ;
+      genre.set( {
+        name: validReqData.name
+      } ) ;
+      genre.save() ;
+      genreDebugger(genre, ' --> ' , validReqData) ;
       return res.send(genre) ;
     } 
     catch(error) {
@@ -87,32 +99,25 @@ router.put('/:id', (req, res) => {
  * DELETE: /api/genres/{id}
  */
 router.delete('/:id', (req, res) => {
-  const genre = findGenre(req.params.id) ;
-  if (! genre) return res.status(404).send('Genre not found') ;
-  
-  const genreIndex   = genres.indexOf(genre) ;
-  genres.splice(genreIndex, 1) ;
-  
-  return res.send( genre ) ;
+  async function deleteGenre() {
+    try {
+      const genre = await Genre.findByIdAndRemove( req.params.id ) ;
+      genreDebugger('genre is -->', genre) ;
+      return (genre === null) ? res.status(404).send('Genre not found.') : res.send(`${genre.name} genre has been deleted.`);
+    } catch (error) {
+      return res.status(404).send(error.message) ;
+    }
+  }
+  deleteGenre() ;
 } ) ;
 
 //------------------ Helper function ------------------------//
-function findGenre(id) {
-  return new Promise(function(resolve, reject) {
-    const genre = genres.find( (g) => {
-      return g.id === Number.parseInt(id) ;
-    } ) ;
-    if( genre === undefined ) reject( new Error('Genre not found') ) ;
-    resolve(genre) ;
-  }) ;
-}
-
 function validateReqBody(body) {
   return new Promise( (resolve, reject) => {
-    const schema = {
-      genreName: Joi.string().min(2).max(7).required()
+    const genreSchema = {
+      name: Joi.string().min(2).max(7).required()
     } ;
-    const result = Joi.validate(body, schema) ;
+    const result = Joi.validate(body, genreSchema) ;
     result.error === null ? resolve(result) : reject( new Error(result.error.details[0].message) ) ;
   } ) ;  
 }
