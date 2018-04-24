@@ -6,11 +6,14 @@ const express     = require('express'),
       config      = require('config'),
       appDebugger = require('debug')('app:startup'),
       dbDebugger  = require('debug')('app:db'),
+      morgan      = require('morgan'),
+      rfs         = require('rotating-file-stream'),
+      fs          = require('fs'),
+      path        = require('path'),
       genres      = require('./routes/genres') ;
 
 const app = express() ;
 
-// process.env.NODE_ENV = 'development' ;
 //---------- Connect to DB -----------------------//
 if ( process.env.NODE_ENV === 'development' ) {
   mongoose
@@ -20,12 +23,21 @@ if ( process.env.NODE_ENV === 'development' ) {
 }
 
 //------------------------------------- Middlewares ------------------------------//
-app.use(express.json()) ;
+app.use(express.json()) ; // Parse request body to JSON.
 
-//--------------------- Routes ---------------------//
+/************** HTTP requests log enabled using morgan and rotating-file-stream **************/
+const logDirectory = path.join(__dirname, 'logs') ;
+fs.existsSync(logDirectory) || fs.mkdir(logDirectory) ;
+const logStream = rfs('access.log', {
+  interval: '1d',
+  path: logDirectory
+}) ;
+app.use(morgan('tiny', {stream: logStream})) ; // Log all http requests.
+
+//--------------------- Routes Middlewares ---------------------//
 app.use('/api/genres', genres) ;
 
-// Ruuning app at 3000 port.
+// Running app at given port.
 app.listen( config.get('port'), () => {
   appDebugger(`Server listening at localhost:${config.get('port')}...`) ;
 } ) ;
