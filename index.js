@@ -8,7 +8,8 @@ const express     = require('express'),
       dbDebugger  = require('debug')('app:db'),
       morgan      = require('morgan'),
       logStream   = require('./middlewares/logger'),
-      genres      = require('./routes/genres') ;
+      genres      = require('./routes/genres'),
+      customers   = require('./routes/customers') ;
 
 const app = express() ;
 
@@ -26,6 +27,7 @@ app.use(morgan('tiny', {stream: logStream})) ; // Log all http requests.
 
 //--------------------- Routes Middlewares ---------------------//
 app.use('/api/genres', genres) ;
+app.use('/api/customers', customers) ;
 
 // Running app at given port.
 app.listen( config.get('port'), () => {
