@@ -9,7 +9,9 @@ const express     = require('express'),
       morgan      = require('morgan'),
       logStream   = require('./middlewares/logger'),
       genres      = require('./routes/genres'),
-      customers   = require('./routes/customers') ;
+      customers   = require('./routes/customers'),
+      movies      = require('./routes/movies') ;
+
 
 const app = express() ;
 
@@ -28,6 +30,7 @@ app.use(morgan('tiny', {stream: logStream})) ; // Log all http requests.
 //--------------------- Routes Middlewares ---------------------//
 app.use('/api/genres', genres) ;
 app.use('/api/customers', customers) ;
+app.use('/api/movies', movies) ;
 
 // Running app at given port.
 app.listen( config.get('port'), () => {
