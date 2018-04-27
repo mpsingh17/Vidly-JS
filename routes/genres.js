@@ -4,7 +4,7 @@ const express       = require('express'),
       mongoose      = require('mongoose'),
       dbDebugger    = require('debug')('app:db'),
       genreDebugger = require('debug')('app:genre'),
-      Genre         = require('../models/Genre'),
+      {Genre}       = require('../models/genre'),
       GenreLib      = require('../libraries/genre') ;
 
 /**
