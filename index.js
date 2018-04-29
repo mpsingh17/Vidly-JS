@@ -16,8 +16,13 @@ const express     = require('express'),
       error       = require('./middlewares/error') ;
 
 const app = express() ;
-
 winston.add(winston.transports.File, {filename: './logs/winston.log'}) ;
+
+winston.handleExceptions(new winston.transports.File({filename: './logs/winston.log'})) ;
+
+process.on('unhandledRejection', (ex) => {
+  throw ex ;
+}) ;
 
 //---------- Connect to DB -----------------------//
 if ( process.env.NODE_ENV === 'development' ) {
