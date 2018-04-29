@@ -1,7 +1,7 @@
 const express       = require('express'),
       router        = express.Router(),
       movieDebugger = require('debug')('app:movie'),
-      Movie         = require('../models/movie'),
+      {Movie}         = require('../models/movie'),
       {Genre}       = require('../models/genre'),
       movieLib      = require('../libraries/movie') ;
 

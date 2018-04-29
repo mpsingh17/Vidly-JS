@@ -3,7 +3,7 @@ const express          = require('express'),
       Joi              = require('joi'),
       customerDebugger = require('debug')('app:customer'),
       dbDebugger       = require('debug')('app:db'),
-      Customer         = require('../models/customer'),
+      {Customer}         = require('../models/customer'),
       CustomerLib      = require('../libraries/customer') ;
 
 /**

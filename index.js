@@ -1,7 +1,6 @@
 require('dotenv').config() ;
 
 const express     = require('express'),
-      Joi         = require('joi'),
       mongoose    = require('mongoose'),
       config      = require('config'),
       appDebugger = require('debug')('app:startup'),
@@ -10,7 +9,8 @@ const express     = require('express'),
       logStream   = require('./middlewares/logger'),
       genres      = require('./routes/genres'),
       customers   = require('./routes/customers'),
-      movies      = require('./routes/movies') ;
+      movies      = require('./routes/movies'),
+      rentals     = require('./routes/rentals') ;
 
 
 const app = express() ;
@@ -31,6 +31,7 @@ app.use(morgan('tiny', {stream: logStream})) ; // Log all http requests.
 app.use('/api/genres', genres) ;
 app.use('/api/customers', customers) ;
 app.use('/api/movies', movies) ;
+app.use('/api/rentals', rentals) ;
 
 // Running app at given port.
 app.listen( config.get('port'), () => {
