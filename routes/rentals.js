@@ -11,18 +11,12 @@ const express           = require('express'),
  * Send all available rentals.
  */
 router.get('/', async (req, res) => {
-  try {
-    const rentals = await Rental
-      .find()
-      .populate('customer', 'name -_id')
-      .populate('movie', '-_id') ;
-    
-      return res.send(rentals) ;
-  }
-  catch (error) {
-    return res.status(400).send(error.message) ;
-  }
+  const rentals = await Rental
+    .find()
+    .populate('customer', 'name -_id')
+    .populate('movie', '-_id') ;
 
+  return res.send(rentals) ;
 }) ;
 
 /**
@@ -30,35 +24,28 @@ router.get('/', async (req, res) => {
  * Create rental
  */
 router.post('/', async (req, res) => {
-  try {
-    const reqValidationResult = await validateReqBody(req.body) ;
-    rentalDebugger('Validation result --> ', reqValidationResult) ;
+  const reqValidationResult = await validateReqBody(req.body) ;
+  rentalDebugger('Validation result --> ', reqValidationResult) ;
 
-    const customer = await Customer.findById(req.body.customerId) ;
-    rentalDebugger('Customer value --> ', customer) ;
-    if (customer === null) return res.status(400).send('Invalid Customer') ;
+  const customer = await Customer.findById(req.body.customerId) ;
+  rentalDebugger('Customer value --> ', customer) ;
+  if (customer === null) return res.status(400).send('Invalid Customer') ;
 
-    const movie = await Movie.findById(req.body.movieId) ;
-    rentalDebugger('Customer value --> ', movie) ;
-    if (movie === null) return res.status(400).send('Invalid Movie') ;
+  const movie = await Movie.findById(req.body.movieId) ;
+  rentalDebugger('Customer value --> ', movie) ;
+  if (movie === null) return res.status(400).send('Invalid Movie') ;
 
-    if (movie.numberInStock === 0) return res.send(`${movie.title} is not avaiable.`) ;
+  if (movie.numberInStock === 0) return res.send(`${movie.title} is not avaiable.`) ;
 
-    const rental = await Rental.create({
-      customer: req.body.customerId,
-      movie: req.body.movieId
-    }) ;
+  const rental = await Rental.create({
+    customer: req.body.customerId,
+    movie: req.body.movieId
+  }) ;
 
-    movie.numberInStock-- ;
-    movie.save() ;
-    
-    return res.send(rental) ;
-  }
-  catch (error) {
-    // rentalDebugger('Validation failed --> ', error) ;
-    return res.status(400).send(error.message) ;
-  }
-
+  movie.numberInStock-- ;
+  movie.save() ;
+  
+  return res.send(rental) ;
 }) ;
 
 module.exports = router ;

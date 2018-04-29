@@ -21,13 +21,8 @@ router.get('/', async (req, res) => {
  * It will send object of single genre
  */
 router.get('/:id', async (req, res) => {
-  try {
-    const genre = await Genre.findById(req.params.id) ;
-    return res.send(genre) ;
-  } 
-  catch(err) {
-    return res.status(404).send(err.message) ;
-  }
+  const genre = await Genre.findById(req.params.id) ;
+  return res.send(genre) ;
 }) ;
 
 /**
@@ -35,14 +30,9 @@ router.get('/:id', async (req, res) => {
  * It will create a genre and push it to genres array.
  */
 router.post('/', async (req, res) => {
-  try {
-    const validReqData = await GenreLib.validateReqBody(req.body) ;
-    const genre =  await new Genre( {name: validReqData.name} ).save() ;
-    return res.send(genre) ;
-  }
-  catch(error) {
-    return res.send(error.message) ;
-  }
+  const validReqData = await GenreLib.validateReqBody(req.body) ;
+  const genre =  await new Genre( {name: validReqData.name} ).save() ;
+  return res.send(genre) ;
 }) ;
 
 /**
@@ -50,27 +40,17 @@ router.post('/', async (req, res) => {
  * It will update a genre object if valid.
  */
 router.put('/:id', async (req, res) => {
-  try {
-    const validReqData = await GenreLib.validateReqBody(req.body) ;    
-    const genre = await Genre.findByIdAndUpdate(req.params.id, {name: req.body.name}, {new: true}) ;
-    return res.send(genre) ;
-  } 
-  catch(error) {
-    return res.send(error.message) ;
-  }
+  const validReqData = await GenreLib.validateReqBody(req.body) ;    
+  const genre = await Genre.findByIdAndUpdate(req.params.id, {name: req.body.name}, {new: true}) ;
+  return res.send(genre) ;
 } ) ;
 
 /**
  * DELETE: /api/genres/{id}
  */
 router.delete('/:id', async (req, res) => {
-  try {
-    const genre = await Genre.findByIdAndRemove( req.params.id ) ;
-    return (genre === null) ? res.status(404).send('Genre not found.') : res.send(`${genre.name} genre has been deleted.`);
-  }
-  catch (error) {
-    return res.status(404).send(error.message) ;
-  }
+  const genre = await Genre.findByIdAndRemove( req.params.id ) ;
+  return (genre === null) ? res.status(404).send('Genre not found.') : res.send(`${genre.name} genre has been deleted.`);
 } ) ;
 
 module.exports = router ;
