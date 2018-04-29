@@ -7,6 +7,7 @@ const express     = require('express'),
       appDebugger = require('debug')('app:startup'),
       dbDebugger  = require('debug')('app:db'),
       morgan      = require('morgan'),
+      winston     = require('winston'),
       logStream   = require('./middlewares/logger'),
       genres      = require('./routes/genres'),
       customers   = require('./routes/customers'),
@@ -15,6 +16,8 @@ const express     = require('express'),
       error       = require('./middlewares/error') ;
 
 const app = express() ;
+
+winston.add(winston.transports.File, {filename: './logs/winston.log'}) ;
 
 //---------- Connect to DB -----------------------//
 if ( process.env.NODE_ENV === 'development' ) {
