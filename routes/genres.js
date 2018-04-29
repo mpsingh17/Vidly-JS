@@ -12,13 +12,8 @@ const express       = require('express'),
  * It will send array of objects of genres
  */
 router.get('/', async (req, res) => {
-  try {
-    const genres = await Genre.find() ;
-    return res.send(genres) ;
-  }
-  catch(err) {
-    return res.status(404).send(err) ;
-  }
+  const genres = await Genre.find() ;
+  return res.send(genres) ;
 }) ;
 
 /**

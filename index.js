@@ -1,4 +1,5 @@
 require('dotenv').config() ;
+require('express-async-errors') ;
 
 const express     = require('express'),
       mongoose    = require('mongoose'),
@@ -10,8 +11,8 @@ const express     = require('express'),
       genres      = require('./routes/genres'),
       customers   = require('./routes/customers'),
       movies      = require('./routes/movies'),
-      rentals     = require('./routes/rentals') ;
-
+      rentals     = require('./routes/rentals'),
+      error       = require('./middlewares/error') ;
 
 const app = express() ;
 
@@ -32,6 +33,8 @@ app.use('/api/genres', genres) ;
 app.use('/api/customers', customers) ;
 app.use('/api/movies', movies) ;
 app.use('/api/rentals', rentals) ;
+
+app.use(error) ;
 
 // Running app at given port.
 app.listen( config.get('port'), () => {
