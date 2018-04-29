@@ -5,7 +5,6 @@ const express     = require('express'),
       mongoose    = require('mongoose'),
       config      = require('config'),
       appDebugger = require('debug')('app:startup'),
-      dbDebugger  = require('debug')('app:db'),
       winston     = require('winston') ;
 
 const app = express() ;
@@ -20,12 +19,7 @@ process.on('unhandledRejection', (ex) => {
 }) ;
 
 //---------- Connect to DB -----------------------//
-if ( process.env.NODE_ENV === 'development' ) {
-  mongoose
-    .connect( 'mongodb://' + config.get('dbConfig.hostName') + '/' + config.get('dbConfig.dbName') )
-    .then( () => { dbDebugger(`Connected to ${config.get('dbConfig.dbName')}...`) } )
-    .catch( (err) => { dbDebugger('Could not connect...', err) } ) ;
-}
+require('./startup/db')() ;
 
 //------------------------------------- Middlewares ------------------------------//
 
