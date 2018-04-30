@@ -1,9 +1,9 @@
-const winston = require('winston'),
+const debug   = require('debug')('app:startup'),
       morgan  = require('morgan') ;
 
 module.exports = function(app) {
   if (app.get('env') === 'development') {
     app.use(morgan('tiny')) ;
-    winston.info('Morgan is enabled.') ;
+    debug('Morgan is enabled.') ;
   }
 }

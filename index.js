@@ -2,7 +2,7 @@ require('dotenv').config() ;
 
 const express = require('express'),
       config  = require('config'),
-      winston = require('winston') ;
+      debug   = require('debug')('app:startup') ;
 
 const app = express() ;
 
@@ -14,4 +14,4 @@ require('./startup/routes')(app) ;
 require('./startup/validation')() ;
 
 // Running app at given port.
-app.listen( config.get('port'), () => winston.info(`Server listening at localhost:${config.get('port')}...`) ) ;
+app.listen( config.get('port'), () => debug(`Server listening at localhost:${config.get('port')}...`) ) ;

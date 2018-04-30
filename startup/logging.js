@@ -1,5 +1,6 @@
 require('express-async-errors') ;
-const winston = require('winston') ;
+const winston = require('winston'),
+      debug   = require('debug')('app:startup') ;
 
 module.exports = function() {
   winston.add(winston.transports.File, {filename: '../logs/winston.log'}) ;
@@ -12,4 +13,5 @@ module.exports = function() {
   process.on('unhandledRejection', (ex) => {
     throw ex ;
   }) ;
+  debug('Winston is ready to handle exceptions.') ;
 }
