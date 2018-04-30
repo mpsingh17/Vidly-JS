@@ -8,7 +8,6 @@ const express     = require('express'),
       winston     = require('winston') ;
 
 const app = express() ;
-require('./startup/routes')(app) ;
 
 winston.add(winston.transports.File, {filename: './logs/winston.log'}) ;
 
@@ -18,15 +17,8 @@ process.on('unhandledRejection', (ex) => {
   throw ex ;
 }) ;
 
-//---------- Connect to DB -----------------------//
 require('./startup/db')() ;
-
-//------------------------------------- Middlewares ------------------------------//
-
-
-
-//--------------------- Routes Middlewares ---------------------//
-
+require('./startup/routes')(app) ;
 
 // Running app at given port.
 app.listen( config.get('port'), () => {

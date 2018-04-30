@@ -1,12 +1,11 @@
 const mongoose    = require('mongoose'),
       config      = require('config'),
-      dbDebugger  = require('debug')('app:db') ;
+      winston     = require('winston') ;
 
 module.exports = function() {
   if ( process.env.NODE_ENV === 'development' ) {
     mongoose
       .connect( 'mongodb://' + config.get('dbConfig.hostName') + '/' + config.get('dbConfig.dbName') )
-      .then( () => { dbDebugger(`Connected to ${config.get('dbConfig.dbName')}...`) } )
-      .catch( (err) => { dbDebugger('Could not connect...', err) } ) ;
+      .then( () => winston.info(`Connected to ${config.get('dbConfig.dbName')}...`) ) ;
   }
 } 
